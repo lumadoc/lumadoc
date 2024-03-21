@@ -79,7 +79,7 @@
 		 * @return void
 		 * @throws PageNotFoundException
 		 */
-		public function showPage($pageUrl)
+		public function renderPage($pageUrl)
 		{
 			if ($pageUrl === '') {
 				$pageUrl = 'index';
@@ -110,7 +110,7 @@
 		 * @throws PageNotFoundException
 		 * @throws FiddleNotFoundException
 		 */
-		public function showFiddle($pageUrl, $fiddleId)
+		public function renderFiddle($pageUrl, $fiddleId)
 		{
 			if ($pageUrl === '') {
 				$pageUrl = 'index';

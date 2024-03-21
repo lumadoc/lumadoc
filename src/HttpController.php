@@ -63,7 +63,7 @@
 			try {
 				$response->setCode(200);
 				$response->setContentType('text/html', 'utf-8');
-				$this->lumadoc->showPage((string) $page);
+				$this->lumadoc->renderPage((string) $page);
 
 			} catch (PageNotFoundException $e) {
 				$this->error($response, 'Page not found.', 404);
@@ -95,7 +95,7 @@
 			try {
 				$response->setCode(200);
 				$response->setContentType('text/html', 'utf-8');
-				$this->lumadoc->showFiddle($page, $fiddle);
+				$this->lumadoc->renderFiddle($page, $fiddle);
 
 			} catch (PageNotFoundException $e) {
 				$this->error($response, 'Page not found.', 404);
