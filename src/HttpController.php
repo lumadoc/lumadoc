@@ -55,7 +55,7 @@
 		{
 			$page = $request->getQuery('page');
 
-			if (!is_string($page)) {
+			if (!is_string($page) && $page !== NULL) {
 				$this->error($response, 'Page not found.', 404);
 				return;
 			}
@@ -63,7 +63,7 @@
 			try {
 				$response->setCode(200);
 				$response->setContentType('text/html', 'utf-8');
-				$this->lumadoc->showPage($page);
+				$this->lumadoc->showPage((string) $page);
 
 			} catch (PageNotFoundException $e) {
 				$this->error($response, 'Page not found.', 404);
