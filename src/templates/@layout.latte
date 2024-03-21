@@ -1,0 +1,72 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="robots" content="noindex,nofollow">
+
+	<title>{$currentPage->getTitle()} | {$docName}</title>
+
+	<link n:foreach="$assets->stylesheets as $assetsStylesheet" rel="stylesheet" href="{$assetsStylesheet}" type="text/css">
+</head>
+<body>
+	<div class="header">
+		<a href="{$linkGenerator->getHomepageUrl()}" class="logo">{$docName}</a>
+	</div>
+
+	<div class="body">
+		<div class="body__content">
+			<div class="htmlContent">
+				{block pageContent}
+					{block title}
+						<h1>{$currentPage->getTitle()}</h1>
+					{/block}
+					{block installation}
+						{if count($installation->stylesheets) > 0 || count($installation->scripts) > 0}
+						<details class="installationInstructions">
+							<summary class="installationInstructions__label">Installation</summary>
+							<div class="installationInstructions__content">
+								{if count($installation->stylesheets) > 0}
+									<b>CSS</b><br>
+									<pre><code class="language-css">{foreach $installation->stylesheets as $installationUrl}@import "{$installationUrl}";{sep}{="\n"}{/sep}{/foreach}</code></pre>
+								{/if}
+
+								{if count($installation->scripts) > 0}
+									<b>JS</b><br>
+									<pre><code class="language-html">{foreach $installation->scripts as $installationUrl}&lt;script src="{$installationUrl}"&gt;&lt;/script&gt;{sep}{="\n"}{/sep}{/foreach}</code></pre>
+								{/if}
+							</div>
+						</details>
+						{/if}
+					{/block}
+					{block content}{/block}
+				{/block}
+			</div>
+		</div>
+
+		<div class="body__menu">
+			<ul class="navigation" role="navigation">
+			{var $globalPages = $pages->findGlobals()}
+
+			<li n:foreach="$globalPages as $globalPage" class="navigation__item">
+				<a href="{$linkGenerator->getPageUrl($globalPage->getUrl())}" n:class="navigation__link, $globalPage->isActive($currentPage) ? navigation__link--active">{$globalPage->getTitle()}</a>
+			</li>
+
+			{foreach $sections as $section}
+				<li class="navigation__section">
+					<span class="navigation__sectionLabel">{$section->getLabel()}</span>
+
+					{var $sectionPages = $pages->findBySection($section)}
+					<ul n:if="count($sectionPages) > 0" class="navigation__menu">
+						<li n:foreach="$sectionPages as $sectionPage" class="navigation__item">
+							<a href="{$linkGenerator->getPageUrl($sectionPage->getUrl())}" n:class="navigation__link, $sectionPage->isActive($currentPage) ? navigation__link--active">{$sectionPage->getTitle()}</a>
+						</li>
+					</ul>
+				</li>
+			{/foreach}
+			</ul>
+		</div>
+	</div>
+
+	<script n:foreach="$assets->scripts as $assetsScript" src="{$assetsScript}"></script>
+</body>
+</html>

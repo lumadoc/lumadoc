@@ -1,0 +1,474 @@
+/*** TOKENS ***/
+:root {
+	--size--3: 0.8125rem;
+	--size--2: 0.875rem;
+	--size--1: 0.9375rem;
+	--size-0: 1rem;
+	--size-1: 1.125rem;
+	--size-2: 1.25rem;
+	--size-3: 1.5rem;
+	--size-4: 1.75rem;
+	--size-5: 2rem;
+	--size-6: 2.25rem;
+	--size-7: 2.5rem;
+}
+
+/*** RESET ***/
+html,
+body,
+div,
+span,
+applet,
+object,
+iframe,
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+p,
+blockquote,
+pre,
+a,
+abbr,
+acronym,
+address,
+big,
+cite,
+code,
+del,
+dfn,
+em,
+img,
+ins,
+kbd,
+q,
+s,
+samp,
+small,
+strike,
+strong,
+sub,
+sup,
+tt,
+var,
+b,
+u,
+i,
+center,
+dl,
+dt,
+dd,
+ol,
+ul,
+li,
+fieldset,
+form,
+label,
+legend,
+table,
+caption,
+tbody,
+tfoot,
+thead,
+tr,
+th,
+td,
+article,
+aside,
+canvas,
+details,
+embed,
+figure,
+figcaption,
+footer,
+header,
+hgroup,
+menu,
+nav,
+output,
+ruby,
+section,
+summary,
+time,
+mark,
+audio,
+video {
+	margin: 0;
+	padding: 0;
+	border: 0;
+	font-size: 100%;
+	font: inherit;
+	vertical-align: baseline;
+}
+
+/* HTML5 display-role reset for older browsers */
+article,
+aside,
+details,
+figcaption,
+figure,
+footer,
+header,
+hgroup,
+menu,
+nav,
+section {
+	display: block;
+}
+
+body {
+	line-height: 1.5;
+	font-family: Arial, sans-serif;
+}
+
+ol,
+ul {
+	list-style: none;
+}
+
+blockquote,
+q {
+	quotes: none;
+}
+
+blockquote:before,
+blockquote:after,
+q:before,
+q:after {
+	content: '';
+	content: none;
+}
+
+table {
+	border-collapse: collapse;
+	border-spacing: 0;
+}
+
+
+/*** LAYOUT ***/
+body {
+	background: #fff;
+}
+
+
+.header {
+	padding: 1rem;
+	background: #112243;
+	color: #fff;
+}
+
+
+.body {
+	display: grid;
+	grid-template-columns: 15rem 1fr;
+	gap: 1rem;
+	align-items: start;
+}
+
+
+.body__menu {
+	background: #f8f8f8;
+	border-right: 1px solid #eee;
+	border-bottom: 1px solid #eee;
+	border-bottom-right-radius: 0.25rem;
+	padding: 2rem 1rem;
+}
+
+
+.body__content {
+	order: 1;
+	padding: 2rem 1rem;
+}
+
+
+/*** LOGO ***/
+.logo {
+	text-decoration: none;
+	color: inherit;
+	font-weight: bold;
+	font-size: var(--size-1);
+}
+
+
+.logo:hover,
+.logo:focus,
+.logo:active {
+	text-decoration: underline;
+}
+
+
+/*** NAVIGATION ***/
+.navigation {
+	margin-bottom: 0;
+	font-size: var(--size--1);
+}
+
+
+.navigation__item {
+	margin-bottom: 0.125rem;
+}
+
+
+.navigation__section {
+	margin-top: 1rem;
+	margin-bottom: 1rem;
+}
+
+
+.navigation__section:first-child {
+	margin-top: 0;
+}
+
+
+.navigation__section:last-child {
+	margin-bottom: 0;
+}
+
+
+.navigation__sectionLabel {
+	display: block;
+	color: #112243;
+	font-weight: bold;
+	margin-bottom: 0.5rem;
+}
+
+
+.navigation__link {
+	display: block;
+	color: #000;
+	text-decoration: none;
+	padding: 0.25rem 0.75rem;
+	border-radius: 0.25rem;
+}
+
+
+.navigation__link:hover,
+.navigation__link:focus,
+.navigation__link:active {
+	text-decoration: underline;
+	background: #eee;
+}
+
+
+.navigation__link--active {
+	font-weight: bold;
+	background: #d6e8ff;
+	color: #000;
+}
+
+
+.navigation__link--active:hover,
+.navigation__link--active:focus,
+.navigation__link--active:active {
+	background: #c7dfff;
+}
+
+
+/*** FIDDLE-EMBED ***/
+.fiddleEmbed {
+	margin: 0;
+	border-radius: 0.25rem;
+	background: #fff;
+	padding: 0.5rem;
+	border: 2px solid #eee;
+	border-radius: 0.5rem;
+	border: none;
+	background: #f8f8f8;
+}
+
+
+.fiddleEmbed__preview {
+	display: block;
+	width: 100%;
+	max-width: 100%;
+	box-sizing: border-box;
+	margin: 0;
+	border-radius: 0.25rem 0.25rem 0 0;
+}
+
+
+.fiddleEmbed__codePreview {
+	position: relative;
+}
+
+
+.fiddleEmbed__codePreviewButton {
+	padding: 0 0.5rem 0;
+	font-size: var(--size--3);
+	color: gray;
+	text-align: right;
+	border-radius: 0.25rem;
+	position: absolute;
+	right: 1rem;
+	cursor: pointer;
+	top: -1.25rem;
+	background: #eee;
+}
+
+
+.fiddleEmbed__codePreview[open] .fiddleEmbed__codePreviewButton {
+	border-bottom-left-radius: 0;
+	border-bottom-right-radius: 0;
+	background: #272822;
+	color: #eee;
+}
+
+
+.fiddleEmbed__code {
+	margin-bottom: 0;
+	border-radius: 0.25rem;
+}
+
+
+.fiddleEmbed__code[class*=language-],
+.fiddleEmbed__code > code[class*=language-] {
+	font-family: monospace, monospace;
+	font-size: var(--size--1);
+	margin: 0;
+}
+
+
+.fiddleEmbed__code[class*=language-] {
+	padding: 1.25rem;
+	border-radius: 0.25rem;
+}
+
+
+.fiddleEmbed__code[class*=language-] > code {
+	background: transparent;
+	padding: 0;
+	margin: 0;
+	border: none;
+	display: block;
+	font: inherit;
+	font-family: monospace, monospace;
+	font-size: var(--size--2);
+}
+
+
+/*** INSTALLATION INSTRUCTIONS ***/
+.installationInstructions {
+	margin-bottom: 1.5rem;
+	border-radius: 0.25rem;
+	background: #f8f8f8;
+}
+
+
+.installationInstructions__label {
+	padding: 0.75rem 1rem;
+	color: #000;
+	border-radius: 0.25rem;
+	cursor: pointer;
+	background: #eee;
+}
+
+
+.installationInstructions__content {
+	padding: 1rem;
+}
+
+
+/*** HTML-CONTENT ***/
+.htmlContent {
+	max-width: 60rem;
+	margin: 0 auto;
+}
+
+
+.htmlContent h1,
+.htmlContent h2,
+.htmlContent h3,
+.htmlContent h4,
+.htmlContent h5,
+.htmlContent h6 {
+	font-weight: bold;
+	color: #000;
+	margin-bottom: 0.75rem;
+}
+
+
+.htmlContent h1 {
+	font-size: var(--size-7);
+}
+
+.htmlContent h2 {
+	font-size: var(--size-6);
+}
+
+.htmlContent h3 {
+	font-size: var(--size-5);
+}
+
+.htmlContent h4 {
+	font-size: var(--size-4);
+}
+
+.htmlContent h5 {
+	font-size: var(--size-3);
+}
+
+.htmlContent h6 {
+	font-size: var(--size-2);
+}
+
+
+.htmlContent b,
+.htmlContent strong {
+	font-weight: bold;
+}
+
+
+.htmlContent i,
+.htmlContent em {
+	font-style: italic;
+}
+
+
+.htmlContent p,
+.htmlContent ul,
+.htmlContent li,
+.htmlContent .fiddleEmbed {
+	margin-bottom: 1.5rem;
+}
+
+
+.htmlContent code,
+.htmlContent pre {
+	background: #eee;
+	display: inline-block;
+	border-radius: 0.25rem;
+	padding: 0 0.25rem;
+	font-family: monospace, monospace;
+	font-size: var(--size--3);
+}
+
+
+.htmlContent pre {
+	display: block;
+	padding: 1rem;
+}
+
+
+.htmlContent hr {
+	margin: 0;
+	margin-top: 1.5rem;
+	margin-bottom: 1.5rem;
+	height: 0;
+	border: none;
+	border-top: 0.125rem solid #eee;
+}
+
+
+.htmlContent .warning {
+	padding: 1rem;
+	background: #ffeda4;
+	border-radius: 0.25rem;
+	margin-bottom: 1.5rem;
+}
+
+
+.htmlContent .warning code {
+	background: #fff;
+}

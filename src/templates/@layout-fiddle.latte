@@ -1,0 +1,16 @@
+<html>
+<head>
+	<meta charset="utf-8">
+	<meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
+	<meta name="robots" content="noindex,nofollow">
+
+	<title>Fiddle {$page->getUrl()} #{$fiddleId}</title>
+
+	<link n:foreach="$assets->stylesheets as $assetsStylesheet" rel="stylesheet" href="{$assetsStylesheet}" type="text/css">
+</head>
+<body>
+	{include content}
+
+	<script n:foreach="$assets->scripts as $assetsScript" src="{$assetsScript}"></script>
+</body>
+</html>

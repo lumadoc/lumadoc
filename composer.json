@@ -1,0 +1,29 @@
+{
+	"name": "lumadoc/lumadoc",
+	"type": "library",
+	"description": "Latte UI documentation generator.",
+	"license": "BSD-3-Clause",
+	"authors": [
+		{
+			"name": "Jan Pecha",
+			"homepage": "https://www.janpecha.cz/"
+		}
+	],
+	"funding": [
+		{"type": "other", "url": "https://www.janpecha.cz/donate/"}
+	],
+	"require": {
+		"php": ">=5.6.0",
+		"latte/latte": "^2.4"
+	},
+	"autoload": {
+		"classmap": ["src/"]
+	},
+	"require-dev": {
+		"nette/http": "^2.4 || ^3.0",
+		"nette/tester": "^2.0"
+	},
+	"suggest": {
+		"nette/http": "For Lumadoc\\HttpController"
+	}
+}
