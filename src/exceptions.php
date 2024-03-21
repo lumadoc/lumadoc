@@ -26,3 +26,8 @@
 	class ParseException extends Exception
 	{
 	}
+
+
+	class InvalidIdException extends Exception
+	{
+	}

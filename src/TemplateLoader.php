@@ -46,10 +46,10 @@
 			$pageUrl = NULL;
 
 			if ($entry instanceof Page) {
-				$pageUrl = $entry->getUrl();
+				$pageUrl = $entry->getId();
 
 			} elseif ($entry instanceof PageFiddle) {
-				$pageUrl = $entry->getPageUrl();
+				$pageUrl = $entry->getPageId();
 
 			} else {
 				throw new InvalidArgumentException('Invalid entry type.');

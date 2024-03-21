@@ -15,23 +15,21 @@
 
 
 		/**
-		 * @param  string $pageId
 		 * @return string
 		 */
-		public function getPageUrl($pageId)
+		public function getPageUrl(PageId $pageId)
 		{
-			return '?page=' . rawurlencode($pageId);
+			return '?page=' . rawurlencode((string) $pageId);
 		}
 
 
 		/**
-		 * @param  string $pageId
 		 * @param  string $fiddleId
 		 * @return string
 		 */
-		public function getFiddleUrl($pageId, $fiddleId)
+		public function getFiddleUrl(PageId $pageId, $fiddleId)
 		{
-			return '?cmd=fiddle&page=' . rawurlencode($pageId) . '&fiddle=' . rawurlencode($fiddleId);
+			return '?cmd=fiddle&page=' . rawurlencode((string) $pageId) . '&fiddle=' . rawurlencode($fiddleId);
 		}
 
 

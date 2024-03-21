@@ -48,7 +48,7 @@
 			{var $globalPages = $pages->findGlobals()}
 
 			<li n:foreach="$globalPages as $globalPage" class="navigation__item">
-				<a href="{$linkGenerator->getPageUrl($globalPage->getUrl())}" n:class="navigation__link, $globalPage->isActive($currentPage) ? navigation__link--active">{$globalPage->getTitle()}</a>
+				<a href="{$linkGenerator->getPageUrl($globalPage->getId())}" n:class="navigation__link, $globalPage->isActive($currentPage) ? navigation__link--active">{$globalPage->getTitle()}</a>
 			</li>
 
 			{foreach $sections as $section}
@@ -58,7 +58,7 @@
 					{var $sectionPages = $pages->findBySection($section)}
 					<ul n:if="count($sectionPages) > 0" class="navigation__menu">
 						<li n:foreach="$sectionPages as $sectionPage" class="navigation__item">
-							<a href="{$linkGenerator->getPageUrl($sectionPage->getUrl())}" n:class="navigation__link, $sectionPage->isActive($currentPage) ? navigation__link--active">{$sectionPage->getTitle()}</a>
+							<a href="{$linkGenerator->getPageUrl($sectionPage->getId())}" n:class="navigation__link, $sectionPage->isActive($currentPage) ? navigation__link--active">{$sectionPage->getTitle()}</a>
 						</li>
 					</ul>
 				</li>

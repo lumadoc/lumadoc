@@ -83,10 +83,11 @@
 
 				$url = ltrim(Strings::substring(dirname($path), $directoryLength) . '/' . $file->getBasename('.' . $file->getExtension()), '/');
 
-				if (!Page::isUrlValid($url)) {
+				if ($url === '' || !PageId::isValid($url)) {
 					continue;
 				}
 
+				$url = new PageId($url);
 				$file = (string) $file;
 
 				if ($file === '') {
@@ -97,7 +98,7 @@
 			}
 
 			usort($pages, function (Page $a, Page $b) {
-				return strcmp($a->getUrl(), $b->getUrl());
+				return strcmp((string) $a->getId(), (string) $b->getId());
 			});
 
 			return new self($pages);

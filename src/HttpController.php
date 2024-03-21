@@ -63,7 +63,7 @@
 			try {
 				$response->setCode(200);
 				$response->setContentType('text/html', 'utf-8');
-				$this->lumadoc->renderPage((string) $page);
+				$this->lumadoc->renderPage($this->createPageId((string) $page));
 
 			} catch (PageNotFoundException $e) {
 				$this->error($response, 'Page not found.', 404);
@@ -95,7 +95,7 @@
 			try {
 				$response->setCode(200);
 				$response->setContentType('text/html', 'utf-8');
-				$this->lumadoc->renderFiddle($page, $fiddle);
+				$this->lumadoc->renderFiddle($this->createPageId($page), $fiddle);
 
 			} catch (PageNotFoundException $e) {
 				$this->error($response, 'Page not found.', 404);
@@ -135,6 +135,26 @@
 			foreach ($this->lumadoc->getFiddleCssFiles() as $cssFile) {
 				readfile($cssFile);
 			}
+		}
+
+
+		/**
+		 * @param  string $pageId
+		 * @return PageId
+		 */
+		private function createPageId($pageId)
+		{
+			$pageId = (string) $pageId;
+
+			if ($pageId === '') {
+				$pageId = 'index';
+			}
+
+			if (!PageId::isValid($pageId)) {
+				throw new PageNotFoundException("Invalid page ID '$pageId'");
+			}
+
+			return new PageId($pageId);
 		}
 
 

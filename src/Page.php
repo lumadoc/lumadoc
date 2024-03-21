@@ -9,8 +9,8 @@
 
 	class Page
 	{
-		/** @var string */
-		private $url;
+		/** @var PageId */
+		private $id;
 
 		/** @var non-empty-string */
 		private $file;
@@ -26,20 +26,19 @@
 
 
 		/**
-		 * @param string $url
 		 * @param non-empty-string $file
 		 * @param non-empty-string $title
 		 * @param non-empty-string|NULL $section
 		 */
 		public function __construct(
-			$url,
+			PageId $id,
 			$file,
 			$title,
 			$section,
 			PageAnnotations $annotations
 		)
 		{
-			$this->url = $url;
+			$this->id = $id;
 			$this->file = $file;
 			$this->title = $title;
 			$this->section = $section;
@@ -48,11 +47,11 @@
 
 
 		/**
-		 * @return string
+		 * @return PageId
 		 */
-		public function getUrl()
+		public function getId()
 		{
-			return $this->url;
+			return $this->id;
 		}
 
 
@@ -128,7 +127,7 @@
 		 */
 		public function isActive(self $page)
 		{
-			return $this->url === $page->url;
+			return $this->id->equals($page->id);
 		}
 
 
@@ -139,17 +138,16 @@
 
 
 		/**
-		 * @param  string $url
 		 * @param  non-empty-string $file
 		 * @return self
 		 */
 		public static function createFromFile(
-			$url,
+			PageId $pageId,
 			$file
 		)
 		{
-			$section = Lumadoc::falseToNull(Strings::before($url, '/'));
-			$title = Strings::firstUpper(basename($url));
+			$section = Lumadoc::falseToNull(Strings::before((string) $pageId, '/'));
+			$title = Strings::firstUpper(basename($pageId));
 
 			$content = FileSystem::read($file);
 			$annotations = PageAnnotations::createFromContent($content);
@@ -163,7 +161,7 @@
 			}
 
 			return new self(
-				$url,
+				$pageId,
 				$file,
 				$title !== '' ? $title : $file,
 				$section !== '' ? $section : NULL,

@@ -26,11 +26,11 @@
 
 
 		/**
-		 * @return string
+		 * @return PageId
 		 */
-		public function getPageUrl()
+		public function getPageId()
 		{
-			return $this->page->getUrl();
+			return $this->page->getId();
 		}
 
 

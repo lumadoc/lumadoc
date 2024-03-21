@@ -75,20 +75,15 @@
 
 
 		/**
-		 * @param  string $pageUrl
 		 * @return void
 		 * @throws PageNotFoundException
 		 */
-		public function renderPage($pageUrl)
+		public function renderPage(PageId $pageId)
 		{
-			if ($pageUrl === '') {
-				$pageUrl = 'index';
-			}
-
-			$page = $this->loadPage($pageUrl);
+			$page = $this->loadPage($pageId);
 
 			if ($page === NULL) {
-				throw new PageNotFoundException("Missing page '$pageUrl'");
+				throw new PageNotFoundException("Missing page '$pageId'");
 			}
 
 			$this->latte->render($page, [
@@ -104,22 +99,17 @@
 
 
 		/**
-		 * @param  string $pageUrl
 		 * @param  non-empty-string $fiddleId
 		 * @return void
 		 * @throws PageNotFoundException
 		 * @throws FiddleNotFoundException
 		 */
-		public function renderFiddle($pageUrl, $fiddleId)
+		public function renderFiddle(PageId $pageId, $fiddleId)
 		{
-			if ($pageUrl === '') {
-				$pageUrl = 'index';
-			}
-
-			$page = $this->loadPage($pageUrl);
+			$page = $this->loadPage($pageId);
 
 			if ($page === NULL) {
-				throw new PageNotFoundException("Missing page '$pageUrl'");
+				throw new PageNotFoundException("Missing page '$pageId'");
 			}
 
 			$fiddle = new PageFiddle($page, $fiddleId);
@@ -171,23 +161,18 @@
 
 
 		/**
-		 * @param  non-empty-string $pageUrl
 		 * @return Page|NULL
 		 */
-		private function loadPage($pageUrl)
+		private function loadPage(PageId $pageId)
 		{
-			if (!Page::isUrlValid($pageUrl)) {
-				return NULL;
-			}
-
-			$file = $this->directory . '/' . $pageUrl . '.latte';
+			$file = $this->directory . '/' . $pageId . '.latte';
 
 			if (!is_file($file)) {
 				return NULL;
 			}
 
 			return Page::createFromFile(
-				$pageUrl,
+				$pageId,
 				$file
 			);
 		}
