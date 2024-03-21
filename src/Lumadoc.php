@@ -16,6 +16,9 @@
 		/** @var string */
 		private $directory;
 
+		/** @var PageProvider */
+		private $pageProvider;
+
 		/** @var string */
 		private $assetsBaseUrl;
 
@@ -51,6 +54,7 @@
 			$this->docName = $docName;
 			$this->sections = $sections;
 			$this->directory = $directory;
+			$this->pageProvider = Pages::createFromDirectory($directory);
 			$this->assetsBaseUrl = rtrim($assetsBaseUrl, '/');
 			$this->installationBaseUrl = rtrim($installationBaseUrl, '/');
 			$this->linkGenerator = new LinkGenerator;
@@ -80,7 +84,7 @@
 		 */
 		public function renderPage(PageId $pageId)
 		{
-			$page = $this->loadPage($pageId);
+			$page = $this->pageProvider->findPage($pageId);
 
 			if ($page === NULL) {
 				throw new PageNotFoundException("Missing page '$pageId'");
@@ -91,7 +95,7 @@
 				'linkGenerator' => $this->linkGenerator,
 				'assets' => $this->getAssets(),
 				'sections' => $this->sections,
-				'pages' => Pages::createFromDirectory($this->directory),
+				'pages' => $this->pageProvider,
 				'currentPage' => $page,
 				'installation' => $this->getInstallationAssets($page, $this->installationBaseUrl),
 			]);
@@ -106,7 +110,7 @@
 		 */
 		public function renderFiddle(PageId $pageId, $fiddleId)
 		{
-			$page = $this->loadPage($pageId);
+			$page = $this->pageProvider->findPage($pageId);
 
 			if ($page === NULL) {
 				throw new PageNotFoundException("Missing page '$pageId'");
@@ -157,24 +161,6 @@
 			}
 
 			return $res;
-		}
-
-
-		/**
-		 * @return Page|NULL
-		 */
-		private function loadPage(PageId $pageId)
-		{
-			$file = $this->directory . '/' . $pageId . '.latte';
-
-			if (!is_file($file)) {
-				return NULL;
-			}
-
-			return Page::createFromFile(
-				$pageId,
-				$file
-			);
 		}
 
 

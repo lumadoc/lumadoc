@@ -6,7 +6,7 @@
 	use Nette\Utils\Strings;
 
 
-	class Pages
+	class Pages implements PageProvider
 	{
 		/** @var Page[] */
 		private $pages;
@@ -20,6 +20,18 @@
 		)
 		{
 			$this->pages = $pages;
+		}
+
+
+		public function findPage(PageId $pageId)
+		{
+			foreach ($this->pages as $page) {
+				if ($page->getId()->equals($pageId)) {
+					return $page;
+				}
+			}
+
+			return NULL;
 		}
 
 
