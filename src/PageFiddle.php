@@ -5,6 +5,8 @@
 
 	class PageFiddle
 	{
+		const UriPath = 'fiddle';
+
 		/** @var Page */
 		private $page;
 
@@ -52,8 +54,14 @@
 		}
 
 
-		public function __toString()
+		/**
+		 * @return string
+		 */
+		public function toUri()
 		{
-			return $this->page->getFile() . '#fiddle:' . $this->fiddleId;
+			return Lumadoc::UriScheme . ':' . self::UriPath . '?' . http_build_query([
+				'page' => (string) $this->page->getId(),
+				'fiddle' => $this->fiddleId,
+			]);
 		}
 	}

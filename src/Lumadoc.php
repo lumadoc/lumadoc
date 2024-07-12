@@ -7,6 +7,8 @@
 
 	class Lumadoc
 	{
+		const UriScheme = 'lumadoc';
+
 		/** @var string */
 		private $docName;
 
@@ -60,7 +62,8 @@
 			$this->linkGenerator = new LinkGenerator;
 			$this->templateLoader = new TemplateLoader(
 				__DIR__ . '/templates/@layout-fiddle.latte',
-				$this->linkGenerator
+				$this->linkGenerator,
+				$this->pageProvider
 			);
 			$this->latte = clone $latte;
 			$this->latte->setLoader($this->templateLoader);
@@ -90,7 +93,7 @@
 				throw new PageNotFoundException("Missing page '$pageId'");
 			}
 
-			$this->latte->render($page, [
+			$this->latte->render($page->toUri(), [
 				'docName' => $this->docName,
 				'linkGenerator' => $this->linkGenerator,
 				'assets' => $this->getAssets(),
@@ -117,7 +120,7 @@
 			}
 
 			$fiddle = new PageFiddle($page, $fiddleId);
-			$this->latte->render($fiddle, [
+			$this->latte->render($fiddle->toUri(), [
 				'docName' => $this->docName,
 				'linkGenerator' => $this->linkGenerator,
 				'page' => $page,

@@ -4,6 +4,7 @@
 
 	use Latte;
 	use Latte\CompileException;
+	use Nette\Http\Url;
 	use Nette\Utils\Strings;
 
 
@@ -15,6 +16,9 @@
 		/** @var LinkGenerator */
 		private $linkGenerator;
 
+		/** @var PageProvider */
+		private $pageProvider;
+
 		/** @var Latte\Loaders\FileLoader */
 		private $fileLoader;
 
@@ -24,38 +28,42 @@
 		 */
 		public function __construct(
 			$fiddleLayoutFile,
-			LinkGenerator $linkGenerator
+			LinkGenerator $linkGenerator,
+			PageProvider $pageProvider
 		)
 		{
 			$this->fiddleLayoutFile = $fiddleLayoutFile;
 			$this->linkGenerator = $linkGenerator;
+			$this->pageProvider = $pageProvider;
 			$this->fileLoader = new Latte\Loaders\FileLoader;
 		}
 
 
 		/**
-		 * @param  Page|PageFiddle|string $entry
 		 * @throws FiddleNotFoundException
+		 * @throws PageNotFoundException
 		 */
 		public function getContent($entry)
 		{
-			if (is_string($entry)) {
+			$uri = $this->tryParseUri($entry);
+			$page = NULL;
+			$fiddle = NULL;
+
+			if ($uri === NULL) {
 				return $this->fileLoader->getContent($entry);
-			}
 
-			$pageUrl = NULL;
+			} elseif ($uri->path === Page::UriPath) {
+				$page = $this->loadPage($uri->getQueryParameter('page'));
 
-			if ($entry instanceof Page) {
-				$pageUrl = $entry->getId();
-
-			} elseif ($entry instanceof PageFiddle) {
-				$pageUrl = $entry->getPageId();
+			} elseif ($uri->path === PageFiddle::UriPath) {
+				$page = $this->loadPage($uri->getQueryParameter('page'));
+				$fiddle = $this->loadFiddleId($uri->getQueryParameter('fiddle'));
 
 			} else {
 				throw new InvalidArgumentException('Invalid entry type.');
 			}
 
-			$content = $this->fileLoader->getContent($entry->getFile());
+			$content = $this->fileLoader->getContent($page->getFile());
 			$tokens = Strings::split($content, '~({\/?example\s*[^}]*})~um', PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
 			$result = '';
 			/** @var array<int|string, string> $fiddles */
@@ -91,7 +99,7 @@
 						$fiddleId = count($fiddles) + 1;
 						$fiddles[$fiddleId] = $exampleCode;
 						$result .= '<div class="fiddleEmbed">'
-							. '<iframe class="fiddleEmbed__preview" src="' . $this->linkGenerator->getFiddleUrl($pageUrl, (string) $fiddleId) . '" loading="lazy" sandbox="allow-same-origin"></iframe>'
+							. '<iframe class="fiddleEmbed__preview" src="' . $this->linkGenerator->getFiddleUrl($page->getId(), (string) $fiddleId) . '" loading="lazy" sandbox="allow-same-origin"></iframe>'
 							. '<details class="fiddleEmbed__codePreview">'
 							. '<summary class="fiddleEmbed__codePreviewButton">Show code</summary>'
 							. '<pre class="fiddleEmbed__code">'
@@ -105,7 +113,7 @@
 						$exampleCodeLang = NULL;
 
 					} else {
-						throw new ParseException("Unexpected end macro {/example} in template {$entry->getFile()}");
+						throw new ParseException("Unexpected end macro {/example} in template {$page->getFile()}");
 					}
 
 				} elseif ($exampleCode !== NULL) { // in example
@@ -116,16 +124,14 @@
 				}
 			}
 
-			if ($entry instanceof PageFiddle) {
-				$fiddleId = $entry->getFiddleId();
-
-				if (!isset($fiddles[$fiddleId])) {
-					throw new FiddleNotFoundException("Unknow fiddle $fiddleId");
+			if ($fiddle !== NULL) {
+				if (!isset($fiddles[$fiddle])) {
+					throw new FiddleNotFoundException("Unknow fiddle $fiddle");
 				}
 
 				return "{extends " . $this->fiddleLayoutFile . "}\n"
 					. "{block content}\n"
-					. $fiddles[$fiddleId]
+					. $fiddles[$fiddle]
 					. "\n{/block}\n";
 			}
 
@@ -133,44 +139,114 @@
 		}
 
 
-		/**
-		 * @param  Page|PageFiddle|string $entry
-		 * @param  int $time
-		 * @return bool
-		 */
 		public function isExpired($entry, $time)
 		{
-			if (($entry instanceof Page) || ($entry instanceof PageFiddle)) {
-				$entry = $entry->getFile();
+			$uri = $this->tryParseUri($entry);
+
+			if ($uri !== NULL) {
+				try {
+					$page = $this->loadPage($uri->getQueryParameter('page'));
+					$entry = $page->getFile();
+
+				} catch (PageNotFoundException $e) {
+					// nothing
+				}
 			}
 
 			return $this->fileLoader->isExpired($entry, $time);
 		}
 
 
-		/**
-		 * @param  Page|PageFiddle|string $entry
-		 * @param  string $referringFile
-		 */
 		public function getReferredName($entry, $referringFile)
 		{
-			if (($entry instanceof Page) || ($entry instanceof PageFiddle)) {
-				$entry = $entry->getFile();
+			$uri = $this->tryParseUri($entry);
+
+			if ($uri !== NULL) {
+				try {
+					$page = $this->loadPage($uri->getQueryParameter('page'));
+					$entry = $page->getFile();
+
+				} catch (PageNotFoundException $e) {
+					// nothing
+				}
 			}
 
 			return $this->fileLoader->getReferredName($entry, $referringFile);
 		}
 
 
-		/**
-		 * @param  Page|PageFiddle|string $entry
-		 */
 		public function getUniqueId($entry)
 		{
-			if (($entry instanceof Page) || ($entry instanceof PageFiddle)) {
-				return (string) $entry;
+			$uri = $this->tryParseUri($entry);
+
+			if ($uri !== NULL) {
+				try {
+					$page = $this->loadPage($uri->getQueryParameter('page'));
+					return $page->getFile();
+
+				} catch (PageNotFoundException $e) {
+					// nothing
+				}
 			}
 
 			return $this->fileLoader->getUniqueId($entry);
+		}
+
+
+		/**
+		 * @param  string $entry
+		 * @return Url|NULL
+		 */
+		private function tryParseUri($entry)
+		{
+			if (Strings::startsWith($entry, Lumadoc::UriScheme)) {
+				$uri = new Url($entry);
+
+				if ($uri->scheme === Lumadoc::UriScheme) {
+					return $uri;
+				}
+			}
+
+			return NULL;
+		}
+
+
+		/**
+		 * @param  mixed $pageId
+		 * @return Page
+		 * @throws PageNotFoundException
+		 */
+		private function loadPage($pageId)
+		{
+			if (!is_string($pageId)) {
+				throw new PageNotFoundException("Page ID must be string.");
+			}
+
+			if ($pageId === '') {
+				throw new PageNotFoundException("Page ID must be non-empty-string.");
+			}
+
+			$page = $this->pageProvider->findPage(new PageId($pageId));
+
+			if ($page === NULL) {
+				throw new PageNotFoundException("Page {$pageId} not found.");
+			}
+
+			return $page;
+		}
+
+
+		/**
+		 * @param  mixed $fiddleId
+		 * @return string
+		 * @throws FiddleNotFoundException
+		 */
+		private function loadFiddleId($fiddleId)
+		{
+			if (!is_string($fiddleId)) {
+				throw new FiddleNotFoundException("Fiddle ID must be string.");
+			}
+
+			return $fiddleId;
 		}
 	}

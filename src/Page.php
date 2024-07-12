@@ -9,6 +9,8 @@
 
 	class Page
 	{
+		const UriPath = 'page';
+
 		/** @var PageId */
 		private $id;
 
@@ -131,9 +133,14 @@
 		}
 
 
-		public function __toString()
+		/**
+		 * @return string
+		 */
+		public function toUri()
 		{
-			return $this->file;
+			return Lumadoc::UriScheme . ':' .self::UriPath . '?' . http_build_query([
+				'page' => (string) $this->id,
+			]);
 		}
 
 
