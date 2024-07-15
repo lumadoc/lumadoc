@@ -2,8 +2,6 @@
 
 	namespace Lumadoc;
 
-	use Nette\Utils\Validators;
-
 
 	class Lumadoc
 	{
