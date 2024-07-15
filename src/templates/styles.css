@@ -283,6 +283,8 @@ body {
 	display: block;
 	width: 100%;
 	max-width: 100%;
+	min-height: 4rem;
+	max-height: 40rem;
 	box-sizing: border-box;
 	margin: 0;
 	border-radius: 0.25rem 0.25rem 0 0;

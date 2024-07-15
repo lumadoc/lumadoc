@@ -57,7 +57,7 @@
 						$fiddleId = 'f' . (count($fiddles) + 1);
 						$fiddles[$fiddleId] = $exampleCode;
 						$result .= '<div class="fiddleEmbed">'
-							. '<iframe class="fiddleEmbed__preview" src="' . $this->linkGenerator->getFiddleUrl($page->getId(), $fiddleId) . '" loading="lazy" sandbox="allow-same-origin"></iframe>'
+							. '<iframe class="fiddleEmbed__preview" src="' . $this->linkGenerator->getFiddleUrl($page->getId(), $fiddleId) . '" style="height: ' . ($this->calculateFiddleHeight($exampleCode)) . 'rem" loading="lazy" sandbox="allow-same-origin"></iframe>'
 							. '<details class="fiddleEmbed__codePreview">'
 							. '<summary class="fiddleEmbed__codePreviewButton">Show code</summary>'
 							. '<pre class="fiddleEmbed__code">'
@@ -86,5 +86,19 @@
 				$result,
 				$fiddles
 			);
+		}
+
+
+		/**
+		 * @param  string $s
+		 * @return int
+		 */
+		private function calculateFiddleHeight($s)
+		{
+			$s = Strings::normalizeNewLines($s);
+			$s = str_replace("\n\n", "\n", $s);
+			$s = trim($s);
+
+			return substr_count($s, "\n") + 2;
 		}
 	}
