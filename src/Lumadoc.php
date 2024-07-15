@@ -9,23 +9,11 @@
 	{
 		const UriScheme = 'lumadoc';
 
-		/** @var string */
-		private $docName;
-
-		/** @var Section[] */
-		private $sections;
-
-		/** @var string */
-		private $directory;
+		/** @var Settings */
+		private $settings;
 
 		/** @var PageProvider */
 		private $pageProvider;
-
-		/** @var string */
-		private $assetsBaseUrl;
-
-		/** @var string */
-		private $installationBaseUrl;
 
 		/** @var \Latte\Engine */
 		private $latte;
@@ -37,28 +25,13 @@
 		private $templateLoader;
 
 
-		/**
-		 * @param string $docName
-		 * @param Section[] $sections
-		 * @param string $directory
-		 * @param string $assetsBaseUrl
-		 * @param string $installationBaseUrl
-		 */
 		public function __construct(
-			$docName,
-			array $sections,
-			$directory,
-			$assetsBaseUrl,
-			$installationBaseUrl,
+			Settings $settings,
 			\Latte\Engine $latte
 		)
 		{
-			$this->docName = $docName;
-			$this->sections = $sections;
-			$this->directory = $directory;
-			$this->pageProvider = Pages::createFromDirectory($directory);
-			$this->assetsBaseUrl = rtrim($assetsBaseUrl, '/');
-			$this->installationBaseUrl = rtrim($installationBaseUrl, '/');
+			$this->settings = $settings;
+			$this->pageProvider = Pages::createFromDirectory($settings->getDirectory());
 			$this->linkGenerator = new LinkGenerator;
 			$this->templateLoader = new TemplateLoader(
 				__DIR__ . '/templates/@layout-fiddle.latte',
@@ -69,7 +42,7 @@
 			$this->latte->setLoader($this->templateLoader);
 			$this->latte->addProvider('coreParentFinder', function (\Latte\Runtime\Template $template) {
 				if (!$template->getReferenceType()) {
-					$layoutFile = $this->directory . '/@layout.latte';
+					$layoutFile = $this->settings->getDirectory() . '/@layout.latte';
 
 					if (is_dir($layoutFile)) {
 						return $layoutFile;
@@ -94,13 +67,13 @@
 			}
 
 			$this->latte->render($page->toUri(), [
-				'docName' => $this->docName,
+				'docName' => $this->settings->getDocName(),
 				'linkGenerator' => $this->linkGenerator,
 				'assets' => $this->getAssets(),
-				'sections' => $this->sections,
+				'sections' => $this->settings->getSections(),
 				'pages' => $this->pageProvider,
 				'currentPage' => $page,
-				'installation' => $this->getInstallationAssets($page, $this->installationBaseUrl),
+				'installation' => $this->getInstallationAssets($page, $this->settings->getInstallationBaseUrl()),
 			]);
 		}
 
@@ -121,7 +94,7 @@
 
 			$fiddle = new PageFiddle($page, $fiddleId);
 			$this->latte->render($fiddle->toUri(), [
-				'docName' => $this->docName,
+				'docName' => $this->settings->getDocName(),
 				'linkGenerator' => $this->linkGenerator,
 				'page' => $page,
 				'fiddleId' => $fiddleId,
@@ -136,7 +109,7 @@
 		public function getThemeCssFiles()
 		{
 			$res = [];
-			$stylesFile = $this->directory . '/styles.css';
+			$stylesFile = $this->settings->getDirectory() . '/styles.css';
 
 			if (is_file($stylesFile)) {
 				$res[] = $stylesFile;
@@ -157,7 +130,7 @@
 		public function getFiddleCssFiles()
 		{
 			$res = [];
-			$stylesFile = $this->directory . '/fiddles.css';
+			$stylesFile = $this->settings->getDirectory() . '/fiddles.css';
 
 			if (is_file($stylesFile)) {
 				$res[] = $stylesFile;
@@ -189,7 +162,7 @@
 		 */
 		private function getFiddleAssets(Page $page)
 		{
-			$installationAssets = $this->getInstallationAssets($page, $this->assetsBaseUrl);
+			$installationAssets = $this->getInstallationAssets($page, $this->settings->getAssetsBaseUrl());
 			$assets = (object) [
 				'stylesheets' => array_merge([
 						$this->linkGenerator->getFiddleCssUrl(),
