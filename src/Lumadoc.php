@@ -27,15 +27,18 @@
 
 		public function __construct(
 			Settings $settings,
+			ContentProcessor $contentProcessor,
+			LinkGenerator $linkGenerator,
+			PageProvider $pageProvider,
 			\Latte\Engine $latte
 		)
 		{
 			$this->settings = $settings;
-			$this->pageProvider = Pages::createFromDirectory($settings->getDirectory());
-			$this->linkGenerator = new LinkGenerator;
+			$this->pageProvider = $pageProvider;
+			$this->linkGenerator = $linkGenerator;
 			$this->templateLoader = new TemplateLoader(
 				__DIR__ . '/templates/@layout-fiddle.latte',
-				new DefaultContentProcessor($this->linkGenerator),
+				$contentProcessor,
 				$this->pageProvider
 			);
 			$this->latte = clone $latte;
@@ -221,5 +224,25 @@
 		public static function falseToNull($value)
 		{
 			return $value !== FALSE ? $value : NULL;
+		}
+
+
+		/**
+		 * @param  string $directory
+		 */
+		public static function create(
+			Settings $settings,
+			\Latte\Engine $latte
+		): self
+		{
+			$linkGenerator = new LinkGenerator;
+
+			return new self(
+				$settings,
+				new DefaultContentProcessor($linkGenerator),
+				$linkGenerator,
+				Pages::createFromDirectory($settings->getDirectory()),
+				$latte
+			);
 		}
 	}
