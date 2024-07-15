@@ -83,7 +83,19 @@
 				->from($directory);
 
 			foreach ($finder as $path => $file) {
+				if (!($file instanceof \SplFileInfo)) {
+					throw new InvalidStateException("File must be instance of " . \SplFileInfo::class);
+				}
+
+				if (!is_string($path)) {
+					throw new InvalidStateException("File path must be string");
+				}
+
 				$basename = $file->getBasename();
+
+				if (!is_string($basename)) {
+					throw new InvalidStateException("File basename must be string");
+				}
 
 				if (Strings::startsWith($basename, '.') || Strings::startsWith($basename, '@')) {
 					continue;
