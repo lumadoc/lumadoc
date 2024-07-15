@@ -82,6 +82,10 @@
 				}
 			}
 
+			if (!Strings::contains($result, '{block')) {
+				$result = "{block content}\n" . $result;
+			}
+
 			return new PageContent(
 				$result,
 				$fiddles
