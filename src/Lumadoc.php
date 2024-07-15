@@ -225,9 +225,6 @@
 		}
 
 
-		/**
-		 * @param  string $directory
-		 */
 		public static function create(
 			Settings $settings,
 			\Latte\Engine $latte
