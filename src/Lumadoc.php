@@ -62,7 +62,7 @@
 			$this->linkGenerator = new LinkGenerator;
 			$this->templateLoader = new TemplateLoader(
 				__DIR__ . '/templates/@layout-fiddle.latte',
-				$this->linkGenerator,
+				new DefaultContentProcessor($this->linkGenerator),
 				$this->pageProvider
 			);
 			$this->latte = clone $latte;

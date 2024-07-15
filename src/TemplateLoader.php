@@ -3,7 +3,6 @@
 	namespace Lumadoc;
 
 	use Latte;
-	use Latte\CompileException;
 	use Nette\Http\Url;
 	use Nette\Utils\Strings;
 
@@ -13,8 +12,8 @@
 		/** @var string */
 		private $fiddleLayoutFile;
 
-		/** @var LinkGenerator */
-		private $linkGenerator;
+		/** @var ContentProcessor */
+		private $contentProcessor;
 
 		/** @var PageProvider */
 		private $pageProvider;
@@ -28,12 +27,12 @@
 		 */
 		public function __construct(
 			$fiddleLayoutFile,
-			LinkGenerator $linkGenerator,
+			ContentProcessor $contentProcessor,
 			PageProvider $pageProvider
 		)
 		{
 			$this->fiddleLayoutFile = $fiddleLayoutFile;
-			$this->linkGenerator = $linkGenerator;
+			$this->contentProcessor = $contentProcessor;
 			$this->pageProvider = $pageProvider;
 			$this->fileLoader = new Latte\Loaders\FileLoader;
 		}
@@ -64,78 +63,24 @@
 			}
 
 			$content = $this->fileLoader->getContent($page->getFile());
-			$tokens = Strings::split($content, '~({\/?example\s*[^}]*})~um', PREG_SPLIT_DELIM_CAPTURE | PREG_SPLIT_NO_EMPTY);
-			$result = '';
-			/** @var array<int|string, string> $fiddles */
-			$fiddles = [];
-			$exampleCode = NULL;
-			$exampleCodeLang = NULL;
 
-			foreach ($tokens as $token) {
-				if (Strings::startsWith($token, '{example')) {
-					if ($exampleCode === NULL) {
-						$exampleCode = '';
-						$exampleCodeLang = Strings::trim(Strings::substring($token, 9, -1));
+			try {
+				$pageContent = $this->contentProcessor->processContent($page, $content);
 
-						if ($exampleCodeLang === '') {
-							$exampleCodeLang = 'latte';
-						}
-
-					} else {
-						throw new ParseException("Unexpected start macro {example}. Examples cannot be nested.");
-					}
-
-				} elseif (Strings::startsWith($token, '{/example')) {
-					if ($exampleCode !== NULL) { // in example
-						if ($exampleCode === '') {
-							throw new CompileException("Examples cannot be empty.");
-						}
-
-						if (preg_match('#^([\t ]*)\S#m', $exampleCode, $m)) { // remove & restore indentation
-							$exampleCode = str_replace(["\r", "\n" . $m[1]], ['', "\n"], $exampleCode);
-						}
-
-						$exampleCode = ltrim(rtrim($exampleCode), "\n\r");
-						$fiddleId = count($fiddles) + 1;
-						$fiddles[$fiddleId] = $exampleCode;
-						$result .= '<div class="fiddleEmbed">'
-							. '<iframe class="fiddleEmbed__preview" src="' . $this->linkGenerator->getFiddleUrl($page->getId(), (string) $fiddleId) . '" loading="lazy" sandbox="allow-same-origin"></iframe>'
-							. '<details class="fiddleEmbed__codePreview">'
-							. '<summary class="fiddleEmbed__codePreviewButton">Show code</summary>'
-							. '<pre class="fiddleEmbed__code">'
-							. '<code class="language-' . \Latte\Runtime\Filters::escapeHtmlAttr($exampleCodeLang) . '">'
-							. '{syntax off}' . \Latte\Runtime\Filters::escapeHtml($exampleCode) . '{/syntax}'
-							. '</code>'
-							. '</pre>'
-							. '</details>'
-							. '</div>';
-						$exampleCode = NULL;
-						$exampleCodeLang = NULL;
-
-					} else {
-						throw new ParseException("Unexpected end macro {/example} in template {$page->getFile()}");
-					}
-
-				} elseif ($exampleCode !== NULL) { // in example
-					$exampleCode .= $token;
-
-				} else {
-					$result .= $token;
-				}
+			} catch (ParseException $e) {
+				throw new ParseException("Parsing of file {$page->getFile()} failed.", 0, $e);
 			}
 
 			if ($fiddle !== NULL) {
-				if (!isset($fiddles[$fiddle])) {
-					throw new FiddleNotFoundException("Unknow fiddle $fiddle");
-				}
+				$fiddleContent = $pageContent->getFiddle($fiddle);
 
 				return "{extends " . $this->fiddleLayoutFile . "}\n"
 					. "{block content}\n"
-					. $fiddles[$fiddle]
+					. $fiddleContent
 					. "\n{/block}\n";
 			}
 
-			return $result;
+			return $pageContent->getContent();
 		}
 
 
@@ -238,13 +183,17 @@
 
 		/**
 		 * @param  mixed $fiddleId
-		 * @return string
+		 * @return non-empty-string
 		 * @throws FiddleNotFoundException
 		 */
 		private function loadFiddleId($fiddleId)
 		{
 			if (!is_string($fiddleId)) {
 				throw new FiddleNotFoundException("Fiddle ID must be string.");
+			}
+
+			if ($fiddleId === '') {
+				throw new PageNotFoundException("Fiddle ID must be non-empty-string.");
 			}
 
 			return $fiddleId;
