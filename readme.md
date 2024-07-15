@@ -34,15 +34,17 @@ require __DIR__ . '/vendor/autoload.php';
 
 // settings
 $lumadoc = new Lumadoc\Lumadoc(
-	docName: 'My Doc Name',
-	sections: [
-		new Lumadoc\Section('section1', 'Section One'),
-		new Lumadoc\Section('section2', 'Section Two'),
-		new Lumadoc\Section('blog', 'Blog'),
-	],
-	directory: __DIR__ . '/path/to/docs',
-	assetsBaseUrl: '/assets/',
-	installationBaseUrl: 'https://cdn.example.com/assets/',
+	new Lumadoc\Settings(
+		docName: 'My Doc Name',
+		sections: [
+			new Lumadoc\Section('section1', 'Section One'),
+			new Lumadoc\Section('section2', 'Section Two'),
+			new Lumadoc\Section('blog', 'Blog'),
+		],
+		directory: __DIR__,
+		assetsBaseUrl: '/assets/',
+		installationBaseUrl: 'https://cdn.example.com/assets/'
+	),
 	latte: $latteEngine
 );
 
@@ -69,7 +71,7 @@ composer require nette/http
 ### Start webserver (for local development)
 
 ```
-php -S localhost:8000 path/to/docs/index.php
+php -S localhost:8000 path/to/docs-dir
 ```
 
 ------------------------------
