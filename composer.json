@@ -14,7 +14,8 @@
 	],
 	"require": {
 		"php": "5.6 - 8.3",
-		"latte/latte": "^2.4"
+		"latte/latte": "^2.4",
+		"nette/finder": "^2.4 || ^3.0"
 	},
 	"autoload": {
 		"classmap": ["src/"]
