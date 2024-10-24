@@ -20,9 +20,6 @@
 		/** @var non-empty-string */
 		private $title;
 
-		/** @var non-empty-string|NULL */
-		private $section;
-
 		/** @var PageAnnotations */
 		private $annotations;
 
@@ -30,20 +27,17 @@
 		/**
 		 * @param non-empty-string $file
 		 * @param non-empty-string $title
-		 * @param non-empty-string|NULL $section
 		 */
 		public function __construct(
 			PageId $id,
 			$file,
 			$title,
-			$section,
 			PageAnnotations $annotations
 		)
 		{
 			$this->id = $id;
 			$this->file = $file;
 			$this->title = $title;
-			$this->section = $section;
 			$this->annotations = $annotations;
 		}
 
@@ -72,25 +66,6 @@
 		public function getTitle()
 		{
 			return $this->title;
-		}
-
-
-		/**
-		 * @param  non-empty-string $sectionId
-		 * @return bool
-		 */
-		public function isInSection($sectionId)
-		{
-			return $this->section === $sectionId;
-		}
-
-
-		/**
-		 * @return bool
-		 */
-		public function isGlobal()
-		{
-			return $this->section === NULL;
 		}
 
 
@@ -153,15 +128,10 @@
 			$file
 		)
 		{
-			$section = Lumadoc::falseToNull(Strings::before((string) $pageId, '/'));
 			$title = Strings::firstUpper(basename($pageId));
 
 			$content = FileSystem::read($file);
 			$annotations = PageAnnotations::createFromContent($content);
-
-			if ($annotations->has('lumadoc-section')) {
-				$section = $annotations->get('lumadoc-section');
-			}
 
 			if ($annotations->has('lumadoc-title')) {
 				$title = $annotations->get('lumadoc-title');
@@ -171,7 +141,6 @@
 				$pageId,
 				$file,
 				$title !== '' ? $title : $file,
-				$section !== '' ? $section : NULL,
 				$annotations
 			);
 		}

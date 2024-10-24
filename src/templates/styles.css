@@ -232,6 +232,14 @@ body {
 	color: #112243;
 	font-weight: bold;
 	margin-bottom: 0.5rem;
+	text-decoration: none;
+}
+
+
+.navigation__sectionLabel:focus,
+.navigation__sectionLabel:hover,
+.navigation__sectionLabel:active {
+	text-decoration: underline;
 }
 
 

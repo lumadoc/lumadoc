@@ -2,6 +2,7 @@
 
 	namespace Lumadoc;
 
+	use Nette\Utils\Strings;
 	use Nette\Utils\Validators;
 
 
@@ -39,6 +40,44 @@
 		public function getId()
 		{
 			return $this->id;
+		}
+
+
+		/**
+		 * @return bool
+		 */
+		public function isGlobal()
+		{
+			return !Strings::contains($this->id, '/');
+		}
+
+
+		/**
+		 * @return self|NULL
+		 */
+		public function getParentId()
+		{
+			if ($this->isGlobal()) {
+				return NULL;
+			}
+
+			$parentId = Lumadoc::falseToNull(Strings::before($this->id, '/', -1));
+			return ($parentId !== NULL && $parentId !== '') ? new self($parentId) : NULL;
+		}
+
+
+		/**
+		 * @return string
+		 */
+		public function getBaseName()
+		{
+			$a = Lumadoc::falseToNull(Strings::after($this->id, '/', -1));
+
+			if ($a === NULL) {
+				return $this->id;
+			}
+
+			return $a;
 		}
 
 

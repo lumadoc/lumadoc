@@ -5,41 +5,55 @@
 
 	class Section
 	{
-		/** @var non-empty-string */
-		private $id;
-
-		/** @var non-empty-string */
+		/** @var non-empty-string|NULL */
 		private $label;
 
+		/** @var PageId|NULL */
+		private $link;
+
+		/** @var Page[] */
+		private $pages;
+
 
 		/**
-		 * @param non-empty-string $id
-		 * @param non-empty-string $label
+		 * @param non-empty-string|NULL $label
+		 * @param Page[] $pages
 		 */
 		public function __construct(
-			$id,
-			$label
+			$label,
+			PageId $link = NULL,
+			array $pages
 		)
 		{
-			$this->id = $id;
 			$this->label = $label;
+			$this->link = $link;
+			$this->pages = $pages;
 		}
 
 
 		/**
-		 * @return non-empty-string
-		 */
-		public function getId()
-		{
-			return $this->id;
-		}
-
-
-		/**
-		 * @return non-empty-string
+		 * @return non-empty-string|NULL
 		 */
 		public function getLabel()
 		{
 			return $this->label;
+		}
+
+
+		/**
+		 * @return PageId|NULL
+		 */
+		public function getLink()
+		{
+			return $this->link;
+		}
+
+
+		/**
+		 * @return Page[]
+		 */
+		public function getPages()
+		{
+			return $this->pages;
 		}
 	}

@@ -35,38 +35,84 @@
 		}
 
 
-		/**
-		 * @return Page[]
-		 */
-		public function findGlobals()
+		public function getParentPage(Page $page)
 		{
-			$result = [];
+			$parentId = $page->getId()->getParentId();
 
-			foreach ($this->pages as $page) {
-				if ($page->isGlobal()) {
-					$result[] = $page;
-				}
+			if ($parentId === NULL) {
+				return NULL;
 			}
 
-			return $result;
+			return $this->findPage($parentId);
 		}
 
 
-		/**
-		 * @return Page[]
-		 */
-		public function findBySection(Section $section)
+		public function getChildrenPages(Page $page = NULL)
 		{
-			$sectionId = $section->getId();
-			$result = [];
+			$children = [];
 
-			foreach ($this->pages as $page) {
-				if ($page->isInSection($sectionId)) {
-					$result[] = $page;
+			if ($page !== NULL) {
+				$parentPageId = (string) $page->getId() . '/';
+
+				foreach ($this->pages as $page) {
+					if (Strings::startsWith((string) $page->getId(), $parentPageId)) {
+						$children[] = $page;
+					}
+				}
+
+			} else {
+				foreach ($this->pages as $page) {
+					if ($page->getId()->isGlobal()) {
+						$children[] = $page;
+					}
 				}
 			}
 
-			return $result;
+			return $children;
+		}
+
+
+		public function getNavigation(Page $page)
+		{
+			$pages = [];
+			$sectionLabel = NULL;
+			$sectionLink = NULL;
+
+			$parentPage = $this->getParentPage($page);
+
+			if ($parentPage !== NULL) {
+				$sectionLabel = $parentPage->getTitle();
+				$sectionLink = $parentPage->getId();
+			}
+
+			$pages = $this->getChildrenPages($parentPage);
+
+			usort($pages, function (Page $a, Page $b) {
+				$aBase = $a->getId()->getBaseName();
+				$bBase = $b->getId()->getBaseName();
+
+				if ($aBase === $bBase) {
+					return 0;
+				}
+
+				if ($aBase === 'index') {
+					return -1;
+				}
+
+				if ($bBase === 'index') {
+					return 1;
+				}
+
+				return strcmp($aBase, $bBase);
+			});
+
+			return [
+				new Section(
+					$sectionLabel,
+					$sectionLink,
+					$pages
+				),
+			];
 		}
 
 

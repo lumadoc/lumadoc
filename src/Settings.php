@@ -8,9 +8,6 @@
 		/** @var non-empty-string */
 		private $docName;
 
-		/** @var Section[] */
-		private $sections;
-
 		/** @var string */
 		private $directory;
 
@@ -23,21 +20,18 @@
 
 		/**
 		 * @param non-empty-string $docName
-		 * @param Section[] $sections
 		 * @param string $directory
 		 * @param string $assetsBaseUrl
 		 * @param string $installationBaseUrl
 		 */
 		public function __construct(
 			$docName,
-			$sections,
 			$directory,
 			$assetsBaseUrl,
 			$installationBaseUrl
 		)
 		{
 			$this->docName = $docName;
-			$this->sections = $sections;
 			$this->directory = $directory;
 			$this->assetsBaseUrl = rtrim($assetsBaseUrl, '/');
 			$this->installationBaseUrl = rtrim($installationBaseUrl, '/');
@@ -50,15 +44,6 @@
 		public function getDocName()
 		{
 			return $this->docName;
-		}
-
-
-		/**
-		 * @return Section[]
-		 */
-		public function getSections()
-		{
-			return $this->sections;
 		}
 
 

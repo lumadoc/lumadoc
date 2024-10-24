@@ -71,7 +71,6 @@
 				'docName' => $this->settings->getDocName(),
 				'linkGenerator' => $this->linkGenerator,
 				'assets' => $this->getAssets(),
-				'sections' => $this->settings->getSections(),
 				'pages' => $this->pageProvider,
 				'currentPage' => $page,
 				'installation' => $this->getInstallationAssets($page, $this->settings->getInstallationBaseUrl()),

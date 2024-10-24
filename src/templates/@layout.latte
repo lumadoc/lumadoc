@@ -45,17 +45,15 @@
 
 		<div class="body__menu">
 			<ul class="navigation" role="navigation">
-			{var $globalPages = $pages->findGlobals()}
-
-			<li n:foreach="$globalPages as $globalPage" class="navigation__item">
-				<a href="{$linkGenerator->getPageUrl($globalPage->getId())}" n:class="navigation__link, $globalPage->isActive($currentPage) ? navigation__link--active">{$globalPage->getTitle()}</a>
-			</li>
-
-			{foreach $sections as $section}
+			{foreach $pages->getNavigation($currentPage) as $section}
 				<li class="navigation__section">
-					<span class="navigation__sectionLabel">{$section->getLabel()}</span>
+					{if $section->getLabel() !== NULL}
+						{var $sectionLink = $section->getLink()}
+						<span n:if="$sectionLink === NULL" class="navigation__sectionLabel">{$section->getLabel()}</span>
+						<a n:if="$sectionLink !== NULL" href="{$linkGenerator->getPageUrl($sectionLink)}" class="navigation__sectionLabel">{$section->getLabel()}</a>
+					{/if}
 
-					{var $sectionPages = $pages->findBySection($section)}
+					{var $sectionPages = $section->getPages()}
 					<ul n:if="count($sectionPages) > 0" class="navigation__menu">
 						<li n:foreach="$sectionPages as $sectionPage" class="navigation__item">
 							<a href="{$linkGenerator->getPageUrl($sectionPage->getId())}" n:class="navigation__link, $sectionPage->isActive($currentPage) ? navigation__link--active">{$sectionPage->getTitle()}</a>
