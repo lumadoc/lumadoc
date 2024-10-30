@@ -53,9 +53,12 @@
 
 			if ($page !== NULL) {
 				$parentPageId = (string) $page->getId() . '/';
+				$parentPageLevel = substr_count($parentPageId, '/');
 
 				foreach ($this->pages as $page) {
-					if (Strings::startsWith((string) $page->getId(), $parentPageId)) {
+					$pageId = (string) $page->getId();
+
+					if (Strings::startsWith($pageId, $parentPageId) && (substr_count($pageId, '/') === $parentPageLevel)) {
 						$children[] = $page;
 					}
 				}
