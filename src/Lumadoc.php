@@ -52,6 +52,19 @@
 					return __DIR__ . '/templates/@layout.latte';
 				}
 			});
+			$this->latte->addProvider('lumadocPageLinker', function ($pageId) {
+				if (!($pageId instanceof PageId)) {
+					try {
+						$pageId = new PageId((string) $pageId);
+
+					} catch (InvalidIdException $e) {
+						return '#invalid-page-id';
+					}
+				}
+
+				return $this->linkGenerator->getPageUrl($pageId);
+			});
+			LatteMacros::install($this->latte->getCompiler());
 		}
 
 
