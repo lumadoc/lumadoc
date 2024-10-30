@@ -118,6 +118,12 @@
 				$res[] = __DIR__ . '/templates/styles.css';
 			}
 
+			$themeFile = $this->settings->getDirectory() . '/theme.css';
+
+			if (is_file($themeFile)) {
+				$res[] = $themeFile;
+			}
+
 			$res[] = __DIR__ . '/templates/prism.css';
 
 			return $res;
