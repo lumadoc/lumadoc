@@ -438,7 +438,7 @@ body {
 
 .htmlContent p,
 .htmlContent ul,
-.htmlContent li,
+.htmlContent ol,
 .htmlContent .fiddleEmbed {
 	margin-bottom: 1.5rem;
 }
