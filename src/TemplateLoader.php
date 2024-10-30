@@ -86,36 +86,15 @@
 
 		public function isExpired($entry, $time)
 		{
-			$uri = $this->tryParseUri($entry);
-
-			if ($uri !== NULL) {
-				try {
-					$page = $this->loadPage($uri->getQueryParameter('page'));
-					$entry = $page->getFile();
-
-				} catch (PageNotFoundException $e) {
-					// nothing
-				}
-			}
-
+			$entry = $this->getPageFile($entry);
 			return $this->fileLoader->isExpired($entry, $time);
 		}
 
 
 		public function getReferredName($entry, $referringFile)
 		{
-			$uri = $this->tryParseUri($entry);
-
-			if ($uri !== NULL) {
-				try {
-					$page = $this->loadPage($uri->getQueryParameter('page'));
-					$entry = $page->getFile();
-
-				} catch (PageNotFoundException $e) {
-					// nothing
-				}
-			}
-
+			$entry = $this->getPageFile($entry);
+			$referringFile = $this->getPageFile($referringFile);
 			return $this->fileLoader->getReferredName($entry, $referringFile);
 		}
 
@@ -153,6 +132,28 @@
 			}
 
 			return NULL;
+		}
+
+
+		/**
+		 * @param  string $entry
+		 * @return string
+		 */
+		private function getPageFile($entry)
+		{
+			$uri = $this->tryParseUri($entry);
+
+			if ($uri !== NULL) {
+				try {
+					$page = $this->loadPage($uri->getQueryParameter('page'));
+					return $page->getFile();
+
+				} catch (PageNotFoundException $e) {
+					// nothing
+				}
+			}
+
+			return $entry;
 		}
 
 
