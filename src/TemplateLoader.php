@@ -126,8 +126,8 @@
 
 			if ($uri !== NULL) {
 				try {
-					$page = $this->loadPage($uri->getQueryParameter('page'));
-					return $page->getFile();
+					$this->loadPage($uri->getQueryParameter('page'));
+					return (string) $uri;
 
 				} catch (PageNotFoundException $e) {
 					// nothing
