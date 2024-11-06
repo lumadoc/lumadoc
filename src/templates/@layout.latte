@@ -30,6 +30,11 @@
 									<pre><code class="language-css">{foreach $installation->stylesheets as $installationUrl}@import "{$installationUrl}";{sep}{="\n"}{/sep}{/foreach}</code></pre>
 								{/if}
 
+								{if count($installation->scriptsInHead) > 0}
+									<b>JS (in head)</b><br>
+									<pre><code class="language-html">{foreach $installation->scriptsInHead as $installationUrl}&lt;script src="{$installationUrl}"&gt;&lt;/script&gt;{sep}{="\n"}{/sep}{/foreach}</code></pre>
+								{/if}
+
 								{if count($installation->scripts) > 0}
 									<b>JS</b><br>
 									<pre><code class="language-html">{foreach $installation->scripts as $installationUrl}&lt;script src="{$installationUrl}"&gt;&lt;/script&gt;{sep}{="\n"}{/sep}{/foreach}</code></pre>

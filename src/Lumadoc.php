@@ -189,6 +189,7 @@
 					$installationAssets->stylesheets
 				),
 				'scripts' => $installationAssets->scripts,
+				'scriptsInHead' => $installationAssets->scriptsInHead,
 			];
 
 			return $assets;
@@ -205,6 +206,8 @@
 				'stylesheets' => [
 				],
 				'scripts' => [
+				],
+				'scriptsInHead' => [
 				],
 			];
 
@@ -225,6 +228,16 @@
 					}
 
 					$assets->scripts[] = $assetUrl;
+				}
+			}
+
+			if ($page->hasAnnotation('lumadoc-js-head')) {
+				foreach ($page->getAnnotationValues('lumadoc-js-head') as $assetUrl) {
+					if (!\Nette\Utils\Validators::isUrl($assetUrl)) {
+						$assetUrl = $baseUrl . '/' . $assetUrl;
+					}
+
+					$assets->scriptsInHead[] = $assetUrl;
 				}
 			}
 

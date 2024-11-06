@@ -7,6 +7,7 @@
 	<title>Fiddle {$page->getId()} #{$fiddleId}</title>
 
 	<link n:foreach="$assets->stylesheets as $assetsStylesheet" rel="stylesheet" href="{$assetsStylesheet}" type="text/css">
+	<script n:foreach="$assets->scriptsInHead as $assetsScript" src="{$assetsScript}"></script>
 </head>
 <body>
 	{include content}
