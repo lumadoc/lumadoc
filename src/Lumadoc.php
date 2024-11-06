@@ -55,7 +55,13 @@
 			$this->latte->addProvider('lumadocPageLinker', function ($pageId) {
 				if (!($pageId instanceof PageId)) {
 					try {
-						$pageId = new PageId((string) $pageId);
+						$id = (string) $pageId;
+
+						if ($id === '') {
+							throw new InvalidIdException('PageId must be non-empty-string.');
+						}
+
+						$pageId = new PageId($id);
 
 					} catch (InvalidIdException $e) {
 						return '#invalid-page-id';

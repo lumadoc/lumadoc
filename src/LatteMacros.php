@@ -7,6 +7,9 @@
 
 	class LatteMacros
 	{
+		/**
+		 * @return void
+		 */
 		public static function install(Latte\Compiler $compiler)
 		{
 			$set = new Latte\Macros\MacroSet($compiler);
