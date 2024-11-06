@@ -262,10 +262,13 @@
 		}
 
 
+		/**
+		 * @return self
+		 */
 		public static function create(
 			Settings $settings,
 			\Latte\Engine $latte
-		): self
+		)
 		{
 			$linkGenerator = new LinkGenerator;
 
